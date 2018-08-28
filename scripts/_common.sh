@@ -169,6 +169,14 @@ ynh_abort_if_up_to_date () {
 # Operations needed by both 'install' and 'upgrade' scripts
 function vpnclient_deploy_files_and_services()
 {
+  #=================================================
+  # CREATE DEDICATED USER
+  #=================================================
+
+  # Create a dedicated user (if not existing)
+  ynh_system_user_create $app
+  user=$app
+
   # Install IPv6 scripts
   sudo install -o root -g root -m 0755 ../conf/ipv6_expanded /usr/local/bin/
   sudo install -o root -g root -m 0755 ../conf/ipv6_compressed /usr/local/bin/
@@ -178,11 +186,11 @@ function vpnclient_deploy_files_and_services()
 
   # Copy confs
   sudo mkdir -pm 0755 /var/log/nginx/
-  sudo chown root:admins /etc/openvpn/
+  sudo chown root:${user} /etc/openvpn/
   sudo chmod 775 /etc/openvpn/
   sudo mkdir -pm 0755 /etc/yunohost/hooks.d/post_iptable_rules/
 
-  sudo install -b -o root -g admins -m 0664 ../conf/openvpn_client.conf.tpl /etc/openvpn/client.conf.tpl
+  sudo install -b -o root -g ${user} -m 0664 ../conf/openvpn_client.conf.tpl /etc/openvpn/client.conf.tpl
   sudo install -o root -g root -m 0644 ../conf/openvpn_client.conf.tpl /etc/openvpn/client.conf.tpl.restore
   sudo install -b -o root -g root -m 0644 ../conf/nginx_vpnadmin.conf "/etc/nginx/conf.d/${domain}.d/${app}.conf"
   sudo install -b -o root -g root -m 0644 ../conf/phpfpm_vpnadmin.conf /etc/php5/fpm/pool.d/${app}.conf
@@ -193,13 +201,13 @@ function vpnclient_deploy_files_and_services()
   sudo mkdir -pm 0755 /var/www/${app}/
   sudo cp -a ../sources/* /var/www/${app}/
 
-  sudo chown -R root: /var/www/${app}/
+  sudo chown -R root:${user} /var/www/${app}/
   sudo chmod -R 0644 /var/www/${app}/*
   sudo find /var/www/${app}/ -type d -exec chmod +x {} \;
 
   # Create certificates directory
   sudo mkdir -pm 0770 /etc/openvpn/keys/
-  sudo chown root:admins /etc/openvpn/keys/
+  sudo chown root:${user} /etc/openvpn/keys/
 
   #=================================================
   # NGINX CONFIGURATION
@@ -214,8 +222,8 @@ function vpnclient_deploy_files_and_services()
   #=================================================
 
   sudo sed "s|<TPL:PHP_NAME>|${app}|g" -i /etc/php5/fpm/pool.d/${app}.conf
-  sudo sed "s|<TPL:PHP_USER>|admin|g" -i /etc/php5/fpm/pool.d/${app}.conf
-  sudo sed "s|<TPL:PHP_GROUP>|admins|g" -i /etc/php5/fpm/pool.d/${app}.conf
+  sudo sed "s|<TPL:PHP_USER>|${user}|g" -i /etc/php5/fpm/pool.d/${app}.conf
+  sudo sed "s|<TPL:PHP_GROUP>|${user}|g" -i /etc/php5/fpm/pool.d/${app}.conf
   sudo sed "s|<TPL:NGINX_REALPATH>|/var/www/${app}/|g" -i /etc/php5/fpm/pool.d/${app}.conf
 
   # Fix sources
