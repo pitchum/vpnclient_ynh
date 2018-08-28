@@ -36,8 +36,12 @@ function before($route) {
   );
 
   if(!isset($_SESSION['locale'])) {
-    $locale = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
-    $_SESSION['locale'] = strtolower(substr(chop($locale[0]), 0, 2));
+    if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+      $locale = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+      $_SESSION['locale'] = strtolower(substr(chop($locale[0]), 0, 2));
+    } else {
+      $_SESSION['locale'] = 'en';
+    }
   }
 
   $lang = $_SESSION['locale'];
