@@ -88,5 +88,5 @@ ynh_systemctl reload nginx
 
 if systemctl is-active ynh-vpnclient >/dev/null;
 then
-    ynh_systemctl restart ynh-vpnclient
+    yunohost service restart ynh-vpnclient
 fi
