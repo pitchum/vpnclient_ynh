@@ -9,11 +9,10 @@ if [ ! -e _common.sh ]; then
 	# Get the _common.sh file if it's not in the current directory
 	cp ../settings/scripts/_common.sh ./_common.sh
 	chmod a+rx _common.sh
+	echo "XXX DEBUG pitchum Needed to copy _common.sh from within backup script. WTF!!!"
 fi
 source _common.sh
 source /usr/share/yunohost/helpers
-
-ynh_die "backup script is not implemented yet"
 
 #=================================================
 # MANAGE SCRIPT FAILURE
@@ -74,5 +73,3 @@ ynh_backup "/etc/php5/fpm/pool.d/$app.conf"
 ynh_backup "/etc/systemd/system/ynh-vpnclient.service"
 ynh_backup "/etc/systemd/system/ynh-vpnclient-checker.service"
 ynh_backup "/etc/systemd/system/ynh-vpnclient-checker.timer"
-
-ynh_backup "/etc/cron.d/$app"

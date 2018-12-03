@@ -8,11 +8,10 @@ if [ ! -e _common.sh ]; then
     # Fetch helpers file if not in current directory
     cp ../settings/scripts/_common.sh ./_common.sh
     chmod a+rx _common.sh
+    echo "XXX DEBUG pitchum Needed to copy _common.sh from within backup script. WTF!!!"
 fi
 source _common.sh
 source /usr/share/yunohost/helpers
-
-ynh_die "restore script is not implemented yet"
 
 #=================================================
 # MANAGE SCRIPT FAILURE
